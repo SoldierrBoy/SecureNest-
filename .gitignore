@@ -7,3 +7,6 @@ App_Data/
 *.suo
 .env
 appsettings.Production.json
+
+VIDEO_DEMO_UA.md
+TEST_PLAN_UA.md
