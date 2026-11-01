@@ -1,0 +1,19 @@
+@model AppUser
+@inject Microsoft.Extensions.Configuration.IConfiguration Config
+@{
+    ViewData["Title"] = "Мій профіль";
+    var roles = ViewBag.Roles as IList<string> ?? new List<string>();
+    var logins = ViewBag.Logins as IList<Microsoft.AspNetCore.Identity.UserLoginInfo> ?? new List<Microsoft.AspNetCore.Identity.UserLoginInfo>();
+    var googleLinked = logins.Any(l => l.LoginProvider == "Google");
+    var googleReady = !string.IsNullOrEmpty(Config["Authentication:Google:ClientId"]) && !string.IsNullOrEmpty(Config["Authentication:Google:ClientSecret"]);
+}
+<div class="page-heading"><div><div class="eyebrow eyebrow-small">ОСОБИСТИЙ КАБІНЕТ <span class="eyebrow-line"></span> АКТИВНИЙ СЕАНС</div><h1>Мій <span class="gradient-text">профіль.</span></h1><p>Інформація про ваш обліковий запис і налаштування безпеки.</p></div><div class="heading-badge"><span class="mini-dot"></span> AUTHENTICATED</div></div>
+<div class="dashboard-grid">
+    <section class="card-panel profile-main"><div class="card-kicker">ПРОФІЛЬ КОРИСТУВАЧА <span>01</span></div><div class="profile-identity"><div class="avatar">@(Model.DisplayName.Length > 0 ? Model.DisplayName.Substring(0,1).ToUpper() : "U")</div><div><h2>@Model.DisplayName</h2><p>@Model.Email</p></div></div><div class="profile-details"><div><span>Роль у системі</span><strong>@string.Join(", ", roles)</strong></div><div><span>Дата реєстрації (UTC)</span><strong>@Model.CreatedAtUtc.ToString("dd.MM.yyyy HH:mm")</strong></div><div><span>Останній вхід (UTC)</span><strong>@(Model.LastLoginUtc?.ToString("dd.MM.yyyy HH:mm") ?? "Ще немає")</strong></div></div></section>
+    <section class="card-panel status-panel"><div class="card-kicker">СТАН БЕЗПЕКИ <span>02</span></div><h2>Ваш захист</h2><div class="status-list"><div><span class="status-icon">✉</span><div><strong>Підтвердження email</strong><small>Перевірка власника пошти</small></div><span class="state-label @(Model.EmailConfirmed ? "state-good" : "state-warn")">@(Model.EmailConfirmed ? "Підтверджено" : "Не підтверджено")</span></div><div><span class="status-icon">◈</span><div><strong>Двофакторний захист</strong><small>Часові одноразові коди</small></div><span class="state-label @(Model.TwoFactorEnabled ? "state-good" : "state-warn")">@(Model.TwoFactorEnabled ? "Увімкнено" : "Вимкнено")</span></div><div><span class="status-icon">↗</span><div><strong>Google OpenID Connect</strong><small>Зовнішня автентифікація</small></div><span class="state-label @(googleLinked ? "state-good" : "state-neutral")">@(googleLinked ? "Прив'язано" : "Не прив'язано")</span></div></div><a class="btn btn-primary full" asp-action="TwoFactor">Налаштувати 2FA <span>↗</span></a></section>
+</div>
+<section class="action-panel"><div><div class="eyebrow eyebrow-small">ІНТЕГРАЦІЇ</div><h3>Прив'язка Google</h3><p>Можна входити через Google, не створюючи ще один обліковий запис.</p></div><div>@if(googleLinked) { <span class="state-label state-good">✓ Google підключено</span> } else if(googleReady) { <form asp-action="LinkGoogle" method="post"><button type="submit" class="btn btn-secondary">Прив'язати Google ↗</button></form> } else { <span class="muted-help">Потрібне налаштування OIDC у README</span> }</div></section>
+@if (User.IsInRole("Admin"))
+{
+    <section class="action-panel"><div><div class="eyebrow eyebrow-small">АДМІНІСТРУВАННЯ</div><h3>Панель адміністратора</h3><p>Перегляд користувачів, їхніх статусів та журналу авторизацій.</p></div><a class="btn btn-secondary" asp-controller="Admin" asp-action="Index">Відкрити панель →</a></section>
+}

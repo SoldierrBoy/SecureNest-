@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "Безпечне керування акаунтами";
+}
+<section class="hero">
+    <div class="hero-copy">
+        <div class="eyebrow"><span class="eyebrow-spark">✳</span> ЛАБОРАТОРНА РОБОТА №06 <span class="eyebrow-line"></span> БЕЗПЕКА ПРОГРАМ ТА ДАНИХ</div>
+        <h1>Ваш акаунт.<br /><span class="gradient-text">Під надійним</span><br />захистом.</h1>
+        <p class="hero-lead">Демонстраційна система керування обліковими записами з багаторівневим захистом, двофакторною перевіркою та контролем доступу.</p>
+        <div class="hero-actions">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <a class="btn btn-primary" asp-controller="Profile" asp-action="Index">Перейти до профілю <span>↗</span></a>
+            }
+            else
+            {
+                <a class="btn btn-primary" asp-controller="Auth" asp-action="Register">Почати роботу <span>↗</span></a>
+                <a class="btn btn-secondary" asp-controller="Auth" asp-action="Login">Увійти в акаунт <span>→</span></a>
+            }
+        </div>
+        <div class="hero-stats"><div><strong>07</strong><span>вимог реалізовано</span></div><div><strong>2FA</strong><span>додатковий захист</span></div><div><strong>RBAC</strong><span>розмежування прав</span></div></div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+        <div class="halo halo-one"></div><div class="halo halo-two"></div>
+        <div class="shield-widget">
+            <div class="shield-top"><span>◈</span><span class="shield-id">SECURITY ENGINE <span class="shield-number">v1.0</span></span></div>
+            <div class="shield-center"><div class="shield-large">⬡<span>✓</span></div><h3>Захищено</h3><p>Identity • TOTP • RBAC</p></div>
+            <div class="shield-meters"><div><span>Автентифікація</span><b>АКТИВНО</b></div><div><span>Контроль доступу</span><b>АКТИВНО</b></div><div><span>Журнал подій</span><b>АКТИВНО</b></div></div>
+        </div>
+        <div class="floating-pill pill-left"><span>◉</span> Email verified</div><div class="floating-pill pill-right"><span>✓</span> 2FA ready</div>
+    </div>
+</section>
+<section class="feature-section">
+    <div class="section-heading"><div><div class="eyebrow eyebrow-small">ЗАХИСТ ЗА ЗАМОВЧУВАННЯМ</div><h2>Сім рівнів безпеки</h2></div><p>Кожен механізм працює разом, щоб захистити доступ до особистих даних.</p></div>
+    <div class="feature-grid">
+        <article class="feature"><span class="feature-icon">⌘</span><small>01 / IDENTITY</small><h3>Надійні паролі</h3><p>Політика складності та безпечне хешування через ASP.NET Core Identity.</p></article>
+        <article class="feature"><span class="feature-icon">▦</span><small>02 / ANTI-BOT</small><h3>CAPTCHA</h3><p>Одноразове зображення-перевірка при кожній реєстрації.</p></article>
+        <article class="feature"><span class="feature-icon">✉</span><small>03 / VERIFICATION</small><h3>Підтвердження пошти</h3><p>Активація через обмежене в часі посилання.</p></article>
+        <article class="feature"><span class="feature-icon">⊘</span><small>04 / DEFENSE</small><h3>Brute Force захист</h3><p>Тимчасове блокування після п'яти помилок входу.</p></article>
+        <article class="feature"><span class="feature-icon">◈</span><small>05 / TOTP</small><h3>Двофакторний вхід</h3><p>Одноразові 6-значні коди з застосунку-автентифікатора.</p></article>
+        <article class="feature"><span class="feature-icon">↗</span><small>06 / OPENID CONNECT</small><h3>Google-вхід</h3><p>Зовнішня автентифікація через Google OpenID Connect.</p></article>
+        <article class="feature"><span class="feature-icon">↺</span><small>07 / RECOVERY</small><h3>Відновлення пароля</h3><p>Захищені посилання з терміном дії 60 хвилин.</p></article>
+        <article class="feature feature-accent"><span class="feature-icon">▤</span><small>+ / RBAC</small><h3>Адміністрування</h3><p>Ролі, блокування акаунтів і перегляд журналу входів.</p></article>
+    </div>
+</section>

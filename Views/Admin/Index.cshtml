@@ -1,0 +1,25 @@
+@model IReadOnlyList<AdminUserVm>
+@{ ViewData["Title"] = "Адміністрування"; }
+<div class="page-heading"><div><div class="eyebrow eyebrow-small">CONTROL PANEL <span class="eyebrow-line"></span> ADMIN ONLY</div><h1>Керування <span class="gradient-text">користувачами.</span></h1><p>Перевіряйте статуси та керуйте доступом до системи.</p></div><a class="btn btn-secondary" asp-action="Logs">Журнал входів →</a></div>
+<div class="metric-grid"><div class="metric"><small>ВСЬОГО АКАУНТІВ</small><strong>@ViewBag.UserCount</strong><span>Зареєстровані користувачі</span></div><div class="metric"><small>НЕ АКТИВОВАНО</small><strong>@ViewBag.UnconfirmedCount</strong><span>Очікують email-підтвердження</span></div><div class="metric"><small>ЗАБЛОКОВАНО ВРУЧНУ</small><strong>@ViewBag.BlockedCount</strong><span>Блокування адміністратором</span></div><div class="metric"><small>НЕВДАЛІ / LOCKED ПОДІЇ</small><strong>@ViewBag.FailCount</strong><span>За весь час спостереження</span></div></div>
+<div class="card-panel table-panel"><div class="table-panel-top"><div><div class="card-kicker">КОРИСТУВАЧІ <span>КЕРУВАННЯ</span></div><h2>Облікові записи</h2></div><form asp-action="Index" method="get" class="search-form"><input type="search" name="q" value="@ViewBag.Query" placeholder="Пошук за email..." aria-label="Пошук за email" /><button class="btn btn-secondary" type="submit">Знайти</button></form></div>
+    <div class="table-scroll"><table class="data-table"><thead><tr><th>КОРИСТУВАЧ</th><th>РОЛЬ</th><th>EMAIL</th><th>ДОСТУП</th><th>ПОМИЛКОВІ ВХОДИ</th><th>ДІЯ</th></tr></thead><tbody>
+        @foreach (var u in Model)
+        {
+            var temporarilyLocked = u.User.LockoutEnd.HasValue && u.User.LockoutEnd.Value > DateTimeOffset.UtcNow;
+            <tr><td><strong>@u.User.DisplayName</strong><small>@u.User.Email</small></td><td><span class="state-label state-neutral">@(u.IsAdmin ? "Admin" : "User")</span></td><td><span class="state-label @(u.User.EmailConfirmed ? "state-good" : "state-warn")">@(u.User.EmailConfirmed ? "Підтверджено" : "Не активовано")</span></td><td><span class="state-label @(u.User.IsBlocked || temporarilyLocked ? "state-bad" : "state-good")">@(u.User.IsBlocked ? "Ручне блокування" : (temporarilyLocked ? "Тимчасово заблоковано" : "Дозволено"))</span></td><td>@u.FailedAttempts <small>поточний лічильник: @u.User.AccessFailedCount / 5</small></td><td>
+                    @if (u.IsAdmin) { <span class="muted-help">Захищено</span> }
+                    else if(u.User.IsBlocked || temporarilyLocked)
+                    { <form asp-action="Unblock" asp-route-id="@u.User.Id" method="post"><button class="table-action" type="submit">Розблокувати</button></form> }
+                    else
+                    { <form asp-action="Block" asp-route-id="@u.User.Id" method="post"><button class="table-action danger-action" type="submit" data-confirm="Заблокувати користувача?">Блокувати</button></form> }
+                </td></tr>
+        }
+        @if(Model.Count == 0) { <tr><td colspan="6" class="empty-cell">Користувачів не знайдено.</td></tr> }
+    </tbody></table></div>
+    <div class="pagination"><span>Сторінка @ViewBag.Page із @ViewBag.PageCount</span><div>
+        @if(ViewBag.Page > 1) { <a class="btn btn-secondary" asp-action="Index" asp-route-page="@(ViewBag.Page - 1)" asp-route-q="@ViewBag.Query">← Назад</a> }
+        @if(ViewBag.Page < ViewBag.PageCount) { <a class="btn btn-secondary" asp-action="Index" asp-route-page="@(ViewBag.Page + 1)" asp-route-q="@ViewBag.Query">Вперед →</a> }
+    </div></div>
+    <p class="table-note">Всі користувачі доступні через сторінки та пошук. Відкриті сесії заблокованих користувачів анулюються.</p>
+</div>

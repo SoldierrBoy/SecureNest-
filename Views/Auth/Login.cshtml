@@ -1,0 +1,24 @@
+@model LoginVm
+@inject Microsoft.Extensions.Configuration.IConfiguration Config
+@{ ViewData["Title"] = "Вхід до акаунта"; var google = !string.IsNullOrWhiteSpace(Config["Authentication:Google:ClientId"]) && !string.IsNullOrWhiteSpace(Config["Authentication:Google:ClientSecret"]); }
+<div class="auth-layout">
+    <div class="auth-panel"><div class="eyebrow eyebrow-small">ЗАХИЩЕНИЙ ДОСТУП</div><h1>З поверненням<br /><span class="gradient-text">до SecureNest.</span></h1><p>Ваші дані під контролем. Увійдіть, щоб продовжити.</p><div class="quote-card"><span>✳</span><p>Безпека — це не одна функція, а декілька захисних шарів, що працюють разом.</p></div></div>
+    <div class="form-card"><div class="form-card-header"><div class="form-topline">АВТЕНТИФІКАЦІЯ <span>SECURE LOGIN</span></div><h2>Вхід</h2><p>Немає облікового запису? <a asp-action="Register">Зареєструватись →</a></p></div>
+        <form asp-action="Login" method="post" asp-route-returnUrl="@ViewBag.ReturnUrl">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <div class="field"><label asp-for="Email">Електронна пошта</label><input asp-for="Email" type="email" autocomplete="username" placeholder="name@example.com" /><span asp-validation-for="Email" class="field-error"></span></div>
+            <div class="field"><div class="label-row"><label asp-for="Password">Пароль</label><a asp-action="ForgotPassword">Забули пароль?</a></div><input asp-for="Password" type="password" autocomplete="current-password" placeholder="Введіть пароль" /><span asp-validation-for="Password" class="field-error"></span></div>
+            <label class="checkbox-line"><input asp-for="RememberMe" /> Запам'ятати мене на цьому пристрої</label>
+            <button type="submit" class="btn btn-primary full">Увійти <span>↗</span></button>
+        </form>
+        @if (google)
+        {
+            <div class="divider-with-label"><span>або</span></div><a class="btn google-btn full" asp-action="Google" asp-route-returnUrl="@ViewBag.ReturnUrl"><span class="google-g">G</span> Увійти через Google <span>↗</span></a>
+        }
+        else
+        {
+            <p class="form-note muted-note">Google OpenID Connect стане доступним після введення ClientId та ClientSecret (див. README).</p>
+        }
+        <div class="secondary-panel"><h3>Не прийшов лист активації?</h3><form asp-action="ResendActivation" method="post" class="inline-form"><input type="email" name="Email" required placeholder="Ваш email" aria-label="Email для повторного листа" /><button type="submit" class="btn btn-secondary">Надіслати →</button></form></div>
+    </div>
+</div>

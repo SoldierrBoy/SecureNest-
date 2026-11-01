@@ -1,0 +1,59 @@
+@inject Microsoft.AspNetCore.Hosting.IWebHostEnvironment HostEnv
+@{
+    var pageTitle = ViewData["Title"]?.ToString() ?? "Безпечна система";
+}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>@pageTitle · SecureNest</title>
+    <link rel="stylesheet" asp-append-version="true" href="~/css/site.css" />
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+</head>
+<body>
+    <div class="page-orb orb-one" aria-hidden="true"></div><div class="page-orb orb-two" aria-hidden="true"></div>
+    <header class="site-header">
+        <div class="container nav-row">
+            <a class="brand" asp-controller="Home" asp-action="Index"><span class="brand-symbol" aria-hidden="true">◈</span><span>Secure<span class="brand-accent">Nest</span></span></a>
+            <nav class="main-nav" aria-label="Основна навігація">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Profile" asp-action="Index">Мій профіль</a>
+                    <a asp-controller="Profile" asp-action="TwoFactor">Безпека</a>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-controller="Admin" asp-action="Index">Користувачі</a>
+                        <a asp-controller="Admin" asp-action="Logs">Журнал входів</a>
+                    }
+                    <form asp-controller="Auth" asp-action="Logout" method="post" class="nav-form">
+                        <button type="submit" class="nav-logout">Вийти <span aria-hidden="true">↗</span></button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-controller="Auth" asp-action="Login">Увійти</a>
+                    <a asp-controller="Auth" asp-action="Register" class="nav-primary">Створити акаунт <span aria-hidden="true">↗</span></a>
+                }
+            </nav>
+        </div>
+    </header>
+    <main class="container main-content">
+        @if (HostEnv.IsDevelopment())
+        {
+            <div class="dev-bar"><span class="mini-dot"></span> ДЕМОРЕЖИМ <span class="dev-separator">/</span> Локальний проєкт для лабораторної роботи №6 <a href="/dev/mail">Відкрити тестову пошту →</a></div>
+        }
+        @if (TempData["Success"] is string ok)
+        {
+            <div class="alert alert-success" role="status"><span>✓</span> @ok</div>
+        }
+        @if (TempData["Warning"] is string warn)
+        {
+            <div class="alert alert-warning" role="alert"><span>!</span> @warn</div>
+        }
+        @RenderBody()
+    </main>
+    <footer class="site-footer"><div class="container footer-row"><span>© 2026 SecureNest <span class="footer-muted">/ Лабораторна робота 6</span></span><span class="footer-right"><span class="mini-dot"></span> ASP.NET Core · Identity · SQLite</span></div></footer>
+</body>
+</html>

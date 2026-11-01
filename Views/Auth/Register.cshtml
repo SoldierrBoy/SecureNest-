@@ -1,0 +1,18 @@
+@model RegisterVm
+@{ ViewData["Title"] = "Реєстрація"; }
+<div class="auth-layout">
+    <div class="auth-panel"><div class="eyebrow eyebrow-small">СТВОРЕННЯ ОБЛІКОВОГО ЗАПИСУ</div><h1>Почнімо із<br /><span class="gradient-text">безпеки.</span></h1><p>Один акаунт — усі можливості захищеної системи.</p><div class="step-list"><div><b>01</b><span>Заповніть дані та створіть сильний пароль</span></div><div><b>02</b><span>Пройдіть CAPTCHA</span></div><div><b>03</b><span>Підтвердьте email за посиланням</span></div></div></div>
+    <div class="form-card"><div class="form-card-header"><div class="form-topline">НОВИЙ АКАУНТ <span>01 — 03</span></div><h2>Реєстрація</h2><p>Вже є профіль? <a asp-action="Login">Увійти →</a></p></div>
+        <form asp-action="Register" method="post" autocomplete="on">
+            <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+            <div class="field"><label asp-for="DisplayName">Ваше ім'я</label><input asp-for="DisplayName" autocomplete="name" placeholder="Наприклад, Іван" /><span asp-validation-for="DisplayName" class="field-error"></span></div>
+            <div class="field"><label asp-for="Email">Електронна пошта</label><input asp-for="Email" type="email" autocomplete="email" placeholder="name@example.com" /><span asp-validation-for="Email" class="field-error"></span></div>
+            <div class="field"><label asp-for="Password">Пароль</label><input asp-for="Password" type="password" autocomplete="new-password" placeholder="Мінімум 8 символів" data-password-input /><span asp-validation-for="Password" class="field-error"></span></div>
+            <div class="password-meter"><div data-password-meter></div></div><div class="password-rules" data-password-rules><span data-rule="length">8+ символів</span><span data-rule="case">A + a</span><span data-rule="digit">Цифра 0–9</span><span data-rule="symbol">Символ !#?</span></div>
+            <div class="field"><label asp-for="ConfirmPassword">Підтвердьте пароль</label><input asp-for="ConfirmPassword" type="password" autocomplete="new-password" placeholder="Повторіть пароль" /><span asp-validation-for="ConfirmPassword" class="field-error"></span></div>
+            <div class="field"><label asp-for="Captcha">CAPTCHA · Введіть символи із зображення</label><div class="captcha-row"><img id="captcha-image" src="/captcha/image" width="290" height="88" alt="CAPTCHA: шість символів, які потрібно переписати у поле" /><button class="captcha-refresh" type="button" data-captcha-refresh aria-label="Оновити CAPTCHA" title="Інше зображення">↻</button></div><input asp-for="Captcha" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="6 символів" /><span asp-validation-for="Captcha" class="field-error"></span></div>
+            <button type="submit" class="btn btn-primary full">Створити акаунт <span>↗</span></button>
+            <p class="form-note">Після реєстрації потрібно підтвердити адресу пошти.</p>
+        </form>
+    </div>
+</div>

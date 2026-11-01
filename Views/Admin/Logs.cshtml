@@ -1,0 +1,14 @@
+@model AdminLogsVm
+@{ ViewData["Title"] = "Журнал входів"; var maxPage = Math.Max(1,(int)Math.Ceiling(Model.Total/40.0)); }
+<div class="page-heading"><div><div class="eyebrow eyebrow-small">SECURITY AUDIT <span class="eyebrow-line"></span> ADMIN ONLY</div><h1>Журнал <span class="gradient-text">входів.</span></h1><p>Час, IP-адреса, результат та кількість спроб автентифікації.</p></div><a class="btn btn-secondary" asp-action="Index">← Користувачі</a></div>
+<div class="card-panel table-panel"><div class="table-panel-top"><div><div class="card-kicker">LOGIN AUDIT <span>@Model.Total ЗАПИСІВ</span></div><h2>Події авторизації</h2></div><form method="get" asp-action="Logs" class="search-form"><input type="search" name="email" value="@Model.Filter" placeholder="Фільтр за email..." aria-label="Фільтр за email"/><button type="submit" class="btn btn-secondary">Фільтр</button></form></div>
+    <div class="table-scroll"><table class="data-table"><thead><tr><th>ЧАС (UTC)</th><th>EMAIL</th><th>IP-АДРЕСА</th><th>РЕЗУЛЬТАТ</th><th>USER-AGENT</th></tr></thead><tbody>
+    @foreach (var log in Model.Logs)
+    {
+        <tr><td class="mono">@log.OccurredUtc.ToString("dd.MM.yyyy HH:mm:ss")</td><td>@log.Email</td><td class="mono">@log.IpAddress</td><td><span class="state-label @(log.Result.StartsWith("SUCCESS") ? "state-good" : (log.Result.Contains("FAILED") || log.Result.Contains("LOCKED") || log.Result.Contains("BLOCKED") ? "state-bad" : "state-warn"))">@log.Result</span></td><td class="agent-text" title="@log.UserAgent">@log.UserAgent</td></tr>
+    }
+    @if(Model.Logs.Count == 0) { <tr><td class="empty-cell" colspan="5">Записів немає.</td></tr> }
+    </tbody></table></div>
+    <div class="pagination"><span>Сторінка @Model.Page із @maxPage</span><div>@if(Model.Page > 1){<a class="btn btn-secondary" asp-action="Logs" asp-route-page="@(Model.Page-1)" asp-route-email="@Model.Filter">← Назад</a>}@if(Model.Page < maxPage){<a class="btn btn-secondary" asp-action="Logs" asp-route-page="@(Model.Page+1)" asp-route-email="@Model.Filter">Вперед →</a>}</div></div>
+</div>
+<div class="card-panel table-panel attempts-panel"><div class="card-kicker">АТАКИ / АКТИВНІСТЬ <span>ОСТАННІ 500 ПОДІЙ</span></div><h2>Кількість спроб за користувачами</h2><div class="table-scroll"><table class="data-table"><thead><tr><th>EMAIL</th><th>УСЬОГО ПОДІЙ</th><th>НЕВДАЛИХ СПРОБ / LOCKED</th></tr></thead><tbody>@foreach(var a in Model.Attempts){<tr><td>@a.Email</td><td>@a.Total</td><td><strong>@a.Failed</strong></td></tr>}@if(Model.Attempts.Count == 0){<tr><td colspan="3" class="empty-cell">Поки немає статистики.</td></tr>}</tbody></table></div></div>

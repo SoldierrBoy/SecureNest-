@@ -1,0 +1,19 @@
+@model TwoFactorSetupVm
+@{ ViewData["Title"] = "Двофакторна автентифікація"; }
+<div class="page-heading"><div><div class="eyebrow eyebrow-small">ACCOUNT SECURITY <span class="eyebrow-line"></span> TOTP</div><h1>Двофакторний <span class="gradient-text">захист.</span></h1><p>Окрім пароля, для входу знадобиться тимчасовий код із телефону.</p></div><a class="btn btn-secondary" asp-action="Index">← Мій профіль</a></div>
+<div class="security-layout">
+    <section class="card-panel twofactor-card"><div class="card-kicker">АВТЕНТИФІКАТОР <span>01</span></div>
+        @if (Model.Enabled)
+        {
+            <div class="big-icon success-icon">✓</div><h2>2FA увімкнено</h2><p>Ваш обліковий запис захищений одноразовими кодами. При наступному вході після пароля система запросить код.</p><div class="notice good-notice">✓ Часові коди з Google Authenticator, Microsoft Authenticator або іншого TOTP-застосунку.</div><form asp-action="DisableTwoFactor" method="post"><div class="field"><label asp-for="Code">Поточний код для вимкнення 2FA</label><input asp-for="Code" type="text" autocomplete="one-time-code" inputmode="numeric" required maxlength="10" placeholder="000000" /></div><button type="submit" class="btn btn-danger">Вимкнути 2FA →</button></form>
+        }
+        else
+        {
+            <div class="big-icon">◈</div><h2>Налаштуйте автентифікатор</h2><p>Відкрийте на телефоні Google Authenticator, Microsoft Authenticator або Authy. Виберіть додавання облікового запису за ключем.</p>
+            <div class="secret-box"><small>СЕКРЕТНИЙ КЛЮЧ · НЕ ПЕРЕДАВАЙТЕ ІНШИМ</small><strong>@Model.SharedKey</strong><button type="button" class="copy-button" data-copy-text="@Model.SharedKey">Копіювати ключ</button></div>
+            <div class="notice">Вкажіть тип «За часом / Time-based», назву «SecureNest» і вставте ключ без пробілів. Потім введіть згенерований код нижче.</div>
+            <form asp-action="EnableTwoFactor" method="post"><div class="field"><label asp-for="Code">Підтвердьте перший шестизначний код</label><input asp-for="Code" type="text" inputmode="numeric" autocomplete="one-time-code" required maxlength="10" placeholder="000000" /></div><button type="submit" class="btn btn-primary full">Увімкнути двофакторний захист →</button></form>
+        }
+    </section>
+    <aside class="card-panel info-sidebar"><div class="card-kicker">ЯК ЦЕ ПРАЦЮЄ <span>02</span></div><h3>Додатковий фактор.</h3><div class="timeline"><div><span>01</span><p>Вводите email та пароль при вході.</p></div><div><span>02</span><p>Система запитує одноразовий шестизначний код.</p></div><div><span>03</span><p>Код перевіряється локально і діє приблизно 30 секунд.</p></div></div><div class="notice">Налаштування нового телефону без старого 2FA-ключа потребує процедури відновлення доступу. Бережіть секретний ключ.</div></aside>
+</div>
